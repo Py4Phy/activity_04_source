@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+problemset:
+  name: Activity 04 (numpy and matplotlib)
+  assets: ["README.md", "tex/assignment.pdf"]
+  problems:
+  - problem: 1
+    title: NumPy arrays
+    filename: problem1.py
+    assets: ["problem1.py"]
+    items:
+    - name: product sx*sy*sz
+      points: 2
+      test: test_1a.py
+    - name: matrix product sx.sy.sz
+      points: 2
+      test: test_1b.py
+    - name: commutator [sx, sy]
+      points: 3
+      test: test_1c.py
+    - name: state vector BONUS
+      points: 2
+      test: test_1d.py
+  - problem: 2
+    title: Coordinate manipulation with NumPy
+    filename: problem2.py
+    assets: ["problem2.py"]
+    items:
+    - name: positions shape
+      points: 1
+      variable: result2a_shape
+      reference: (4, 3)
+    - name: positions ndim
+      points: 1
+      variable: result2a_dimensions
+      reference: 2
+    - name: t shape
+      points: 1
+      variable: result2b_shape
+      reference: (3, )
+    - name: t ndim
+      points: 1
+      variable: result2b_dimensions
+      reference: 1
+    - name: second particle coordinates
+      points: 1
+      variable: result2c
+      reference: [ 1.34234,  1.34234,  0.     ]
+    - name: second particle y coordinate
+      points: 1
+      variable: result2d
+      reference: 1.34234
+    - name: all y coordinates
+      points: 1
+      variable: result2e
+      reference: [0., 1.34234, 0., 1.34234]
+    - name: all y coordinates shape
+      points: 1
+      variable: result2e_shape
+      reference: (4, )
+    - name: all y coordinates ndim
+      points: 1
+      variable: result2e_dimensions
+      reference: 1
+    - name: translate particles
+      points: 3
+      variable: result2f
+      reference: |
+           [[ 1.34234, -1.34234, -1.34234],
+            [ 2.68468,  0.     , -1.34234],
+            [ 2.68468, -1.34234,  0.     ],
+            [ 1.34234,  0.     ,  0.     ]]
+    - name: translate function
+      points: 3
+      test: test_2g.py
+  - problem: 3
+    title: NumPy function plotting
+    setup: sudo -H pip3 install pytest numpy matplotlib
+    filename: problem3.py
+    items:
+    - name: X values
+      points: 1
+      test: test_x.py
+    - name: sinc values
+      points: 4
+      test: test_sinc.py
+    - name: sinc plot
+      points: 3
+      test: test_sinc_plot.py
+      

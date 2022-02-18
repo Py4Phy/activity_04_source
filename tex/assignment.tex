@@ -1,0 +1,249 @@
+%%% generic article type (pdf)latex file
+%%% use together with Makefile
+
+\documentclass[letterpaper]{scrartcl}
+\usepackage{graphicx}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{eufrak}
+\usepackage{mathabx}
+\usepackage{url}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+     colorlinks   = true,
+     urlcolor     = blue,
+     linkcolor    = red,
+     citecolor    = black
+}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{cprotect}
+\usepackage{minted}
+
+
+%\usepackage{wrapfig}
+%\usepackage{subfig}
+%\usepackage[format=plain,labelsep=period,font=small,labelfont=bf]{caption}
+
+%------------------------------------------------------------
+% assignment
+%
+\newcommand{\anumber}{4}
+%
+%------------------------------------------------------------
+
+% hyperref https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#.5Chref
+\urlstyle{same}
+
+%% not working yet...
+\newcounter{TotalPoints}
+\newcounter{TotalBonus}
+
+\newcommand{\BONUS}{\textsc{Bonus: }}
+\newcommand{\bonus}[1]{\textbf{[bonus +#1*]}\stepcounter{TotalBonus}}
+\newcommand{\points}[1]{\textbf{[#1 points]}\stepcounter{TotalPoints}}
+\newenvironment{enuma}{\begin{enumerate}[label=(\alph*)]}{\end{enumerate}}
+\newenvironment{enumi}{\begin{enumerate}[label=(\roman*)]}{\end{enumerate}}
+\newenvironment{solution}{\par\noindent\P{} }{\ \qedsymbol}
+
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\pd}[3][]{\left(\frac{\partial #2}{\partial #3}\right)_{#1}}
+
+\newcommand{\anum}{0\anumber}
+
+
+
+
+\begin{document}
+%\maketitle
+
+\setcounter{section}{\anumber}
+\addtocounter{section}{-1}
+\section{ --- PHY 432: Classroom Activity (30 points total)}
+
+\noindent For a refresher on using \textbf{NumPy} work through the
+\href{https://numpy.org/doc/stable/user/quickstart.html}{NumPy
+  tutorial}.\footnote{Some stuff such as the \texttt{ix\_()} function
+  is fairly esoteric for beginners but almost everything else is what
+  you should be familiar with for your daily work with arrays.} Do the
+examples while you read it.
+
+\noindent ``\BONUS'' problems are tested/autograded but you do not need to
+solve the problem to get the maximum number of points.
+
+
+\subsection{NumPy arrays (12 points)}
+
+
+For the following, add your code to the file \texttt{problem1.py}.
+Given the three arrays
+\begin{minted}{python}
+import numpy as np
+
+sx = np.array([[0, 1], [1, 0]])
+sy = np.array([[0, -1j],[1j, 0]])
+sz = np.array([[1, 0], [0, -1]])
+\end{minted}
+\begin{enuma}
+\item What is the result of \texttt{result1a = sx * sy * sz}?
+  Explain what NumPy array multiplication does to the arrays. (Note:
+  your code should assign the result to the variable
+  \texttt{result1a} in \texttt{problem1.py}.) \points{2}
+\item Use \texttt{np.dot()} to multiply the three arrays (like
+  $\sigma_{x} \cdot \sigma_{y} \cdot \sigma_{z}$, where the dot
+  ``$\cdot$'' indicates a matrix product). Add your code to
+  \texttt{problem1.py} and assign your result to variable
+  \texttt{result1b}. What happened? \points{2}
+\item Compute the ``commutator''
+  $[\sigma_{x}, \sigma_{y}] := \sigma_{x}\cdot\sigma_{y} -
+  \sigma_{y} \cdot \sigma_{x}$ and show that it equals
+  $2i\sigma_{z}$.\footnote{These are the Pauli matrices that
+    describe the three components of the spin operator for a spin
+    $1/2$ particle,
+    $\hat{\vec{S}} = \frac{\hbar}{2}\boldsymbol{\sigma}$. The fact
+    that any two components of the spin operator do \emph{not}
+    commute is a fundamental aspect of quantum mechanics.} Add your
+  code to \texttt{problem1.py}, assign the result to variable
+  \texttt{result1c}. \points{3}
+\item \BONUS Given a ``state vector''
+  \begin{gather*}
+    \vec{v} = \frac{1}{\sqrt{2}}\left(
+      \begin{array}{c}
+        1\\
+        -i
+      \end{array}\right)
+  \end{gather*}
+  calculate the ``expectation value''
+  $\vec{v}^{\dagger} \cdot \sigma_{y} \cdot \vec{v}$ (i.e., the
+  multiplication of the hermitian conjugate of the vector,
+  $\vec{v}^{\dagger}$ with the matrix $\sigma_{y}$ and the vector
+  $\vec{v}$ itself) using NumPy. \footnote{The \emph{hermitian
+      conjugate} $\vec{v}^{\dagger} = (v_{1}^{*}, v_{2}^{*})$ is
+    \texttt{v.conjugate().T} where \texttt{v.T} is shorthand for
+    \texttt{v.transpose()}. It turns out that you don't need the
+    transposition when you use \texttt{np.dot()} but I include it here
+    for conceptual clarity. (Including \texttt{transpose()} comes at a
+    minor performance penalty --- check with \texttt{\%timeit} if you
+    are curious.)}  Add your code to \texttt{problem1.py} and assign
+  your result to variable \texttt{result1d}.\footnote{Note for anyone
+    having done PHY 315 (Quantum Mechanics II) that here you are
+    calculating the quantum mechanical expectation value of the
+    $y$-component of a spin $\frac{1}{2}$ particle in an eigenstate of
+    the operator of the $y$-component of the spin
+    ($\sigma_{y}\vec{v} = -\vec{v}$) and because $\vec{v}$ is
+    normalized, you should get the eigenvalue as the expectation
+    value.})  \bonus{2}
+\end{enuma}
+
+
+\subsection{Coordinate manipulation with NumPy (15 points)}
+We can represent the cartesian coordinates
+$\vec{r}_{i} = (x_{i}, y_{i}, z_{i})$ for four particles as a numpy array
+\texttt{positions}:
+\begin{minted}{python}
+  import numpy as np
+  positions = np.array(\
+      [[0.0, 0.0, 0.0], [1.34234, 1.34234, 0.0], \
+       [1.34234, 0.0,  1.34234], [0.0, 1.34234, 1.34234]])
+  t = np.array([1.34234, -1.34234, -1.34234])
+\end{minted}
+and \texttt{t} will be a translation vector.
+\emph{For the following use NumPy.} Add your code to file
+\texttt{problem2.py} and assign results to variables as indicated in
+the problems.
+\begin{enuma}
+\item What is the \emph{shape} of the array \texttt{positions} and
+  what is its \emph{dimension}? Assign results to variables
+  \texttt{results2a\_shape} and
+  \texttt{results2a\_dimensions}. \points{2}
+\item What is the \emph{shape} of the array \texttt{t} and what is its
+  \emph{dimension}? Assign results to variables
+  \texttt{results2b\_shape} and
+  \texttt{results2b\_dimensions}. \points{2}
+\item How do you access the coordinates of the second particle in
+  \texttt{positions}? Assign the result to variable
+  \texttt{result2c}. \points{1}
+\item For the second particle:
+  \begin{enumi}
+  \item How do you access its $y$-coordinate? Assign the result to
+    variable \texttt{result2d}.  \points{1}
+  \item What type of object is this output, what is its \emph{shape}
+    and its \emph{dimension}?\footnote{Do not assign results to any
+      variables but answer the question for yourself.}
+  \end{enumi}
+\item How do you access the $y$-coordinates of \emph{all} particles?
+  Assign to variable \texttt{result2e}. \points{1}
+
+  What is the \emph{shape} (\texttt{result2e\_shape}) and number of
+  (\texttt{result2e\_dimensions}) of the resulting array? \points{2}
+  dimensions
+\item \label{li:nptranslation} Write Python code to translate all
+    particles by a vector $\vec{t} = (1.34234, -1.34234, -1.34234)$,
+\begin{minted}{python}
+t = np.array([1.34234, -1.34234, -1.34234])
+\end{minted}
+    Add your code to \texttt{problem2.py} and assign the translated
+    coordinates to variable \texttt{result2f}. \points{3}
+\item Make your solution of \ref{li:nptranslation} a function
+  \texttt{translate(coordinates, t)}, which translates all
+  coordinates in the argument \texttt{coordinates} (an
+  \texttt{np.array} of shape \texttt{(N, 3)}) by the translation
+  vector in \texttt{t}. The function should return the translated
+  coordinates as a numpy array.
+
+  Add the function to \texttt{problem2.py}. \points{3}
+
+  Try out your function when applied to (1) the input
+  \texttt{positions} and \texttt{t} from above and (2) for
+  \texttt{positions2 = np.array([[1.5, -1.5, 3], [-1.5, -1.5, -3]])}
+  and \texttt{t2 = np.array([-1.5, 1.5, 3])}.\footnote{Do not assign
+    results to variables, just try out your \texttt{translate())}
+    function on input where you can easily compute the \emph{expected
+      result}.}
+\end{enuma}
+
+
+\subsection{NumPy function plotting with matplotlib (8 points)}
+\label{sec:numpyfuncs}
+
+We want to plot the function \footnote{This is the definition used in
+  \href{https://numpy.org/doc/stable/reference/generated/numpy.sinc.html}{numpy.sinc}
+  function.}
+\begin{gather}
+  \label{eq:sinc}
+  \text{sinc}(x) := \frac{\sin(\pi x)}{\pi x}
+\end{gather}
+over the range $-6 \leq x < 6$.
+
+\begin{enuma}
+\item Use the NumPy
+  \href{https://numpy.org/doc/stable/reference/generated/numpy.linspace.html}{\texttt{numpy.linspace()}}
+  function to generate an array \texttt{X} with 601 values from -6 to
+  6, including the upper boundary. \points{1}
+\item Evaluate $\text{sinc}(x)$ (use the NumPy \texttt{sinc()}
+  function) for all $x$ values in \texttt{X} \footnote{You do
+    \emph{not} need any loops!}  and assign it to a variable
+  \texttt{Y}. \points{4}
+\item Plot your function with matplotlib:
+  \begin{itemize}
+  \item plot \texttt{X} vs \texttt{Y}
+  \item label the $x$-axis with ``x'' and the $y$-axis with ``y = sinc(x)''
+  \item write the plot to a PNG file \texttt{sinc.png}.
+  \end{itemize}
+  \points{3}
+\end{enuma}
+Submit your code as file \texttt{problem3.py} together with the plot
+in file \texttt{sinc.png}.
+
+
+
+
+%Total Points: \arabic{TotalPoints}. Total Bonus: \arabic{TotalBonus}*
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
