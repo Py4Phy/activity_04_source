@@ -19,6 +19,7 @@ problemset:
       test: test_1c.py
     - name: state vector BONUS
       points: 2
+      extra: True
       test: test_1d.py
   - problem: 2
     title: Coordinate manipulation with NumPy
